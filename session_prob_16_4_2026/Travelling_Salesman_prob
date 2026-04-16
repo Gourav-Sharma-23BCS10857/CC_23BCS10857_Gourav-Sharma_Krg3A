@@ -1,0 +1,52 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+const int INF = 1e9;
+int n = 4;
+
+int dist[4][4] = {
+    {0, 10, 15, 20},
+    {10, 0, 35, 25},
+    {15, 35, 0, 30},
+    {20, 25, 30, 0}
+};
+
+int dp[1 << 4][4];
+
+// mask → visited cities
+// pos → current city
+int tsp(int mask, int pos) {
+    // All cities visited
+    if (mask == (1 << n) - 1) {
+        return dist[pos][0]; // return to start
+    }
+
+    // Already computed
+    if (dp[mask][pos] != -1) {
+        return dp[mask][pos];
+    }
+
+    int ans = INF;
+
+    // Try all cities
+    for (int city = 0; city < n; city++) {
+        // If city not visited
+        if ((mask & (1 << city)) == 0) {
+            int newCost = dist[pos][city] +
+                          tsp(mask | (1 << city), city);
+
+            ans = min(ans, newCost);
+        }
+    }
+
+    return dp[mask][pos] = ans;
+}
+
+int main() {
+    memset(dp, -1, sizeof(dp));
+
+    int result = tsp(1, 0); // start from city 0
+    cout << "Minimum cost: " << result << endl;
+
+    return 0;
+}
